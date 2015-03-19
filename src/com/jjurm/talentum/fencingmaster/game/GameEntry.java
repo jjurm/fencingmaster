@@ -1,35 +1,62 @@
 package com.jjurm.talentum.fencingmaster.game;
 
-public class GameEntry {
+import org.json.JSONWriter;
+
+import com.jjurm.talentum.fencingmaster.web.WebObject;
+import com.jjurm.talentum.fencingmaster.web.WebString;
+
+public class GameEntry implements WebObject {
 	
-	protected int reactionTime = -1;
-	protected boolean plateOk = false;
-	protected boolean footOk = false;
+	final long id;
+	final Type type;
+	final GameConditions gameConditions;
 	
-	protected boolean ok = false;
+	protected GameEntry(long id, Type type, GameConditions gameConditions) {
+		this.id = id;
+		this.type = type;
+		this.gameConditions = gameConditions;
+	}
 	
-	public GameEntry(int reactionTime, boolean plateOk, boolean footOk, boolean ok) {
-		this.reactionTime = reactionTime;
-		this.plateOk = plateOk;
-		this.footOk = footOk;
+	public GameEntry(Type type, GameConditions gameConditions) {
+		this(History.newId(), type, gameConditions);
+	}
+	
+	@Override
+	public void toJson(JSONWriter json) {
+		json.object()
+			.key("id").value(id)
+			.key("type").value(type)
+			.key("conds").value(gameConditions)
+			.endObject();
+	}
+
+	public long getId() {
+		return this.id;
+	}
+	
+	public Type getType() {
+		return this.type;
+	}
+
+	public GameConditions getGameConditions() {
+		return this.gameConditions;
+	}
+	
+	public static enum Type implements WebString {
 		
-		this.ok = ok;
-	}
+		GAME("game"), GAMEPART("gamepart");
 
-	public int getReactionTime() {
-		return reactionTime;
+		private String webName;
+	
+		private Type(String webName) {
+			this.webName = webName;
+		}
+		
+		@Override
+		public String getWebName() {
+			return this.webName;
+		}
+		
 	}
-
-	public boolean isPlateOk() {
-		return plateOk;
-	}
-
-	public boolean isFootOk() {
-		return footOk;
-	}
-
-	public boolean isOk() {
-		return ok;
-	}
-
+	
 }

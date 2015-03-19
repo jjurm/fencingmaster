@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			Coach's panel
+		</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script src="jquery.min.js"></script>
+		<script src="script.js"></script>
+	</head>
+	<body>
+		<div class="navbar">
+			<ul>
+				<li style="text-align: left;" onclick="selectedPanel();">Coach's panel</li>
+				<li id="headline">Fencing Master</li>
+				<li style="text-align: right;" onclick="selectedHistory();">History</li>
+			</ul>
+		</div>
+		<div id="content">
+			<div class="fragment" id="fragment_panel" style="display: none">
+				<div id="reaction_block">
+					<div id="reaction_time">0.000</div><div id="reaction_time_sec">sec</div>
+				</div>
+				<div id="stats">
+					<ul>
+						<li id="stats_plate" style="color: green;">Target</li>
+						<li id="stats_foot" style="color: red;">Footwork</li>
+						<li id="stats_reactiontime" style="color: green;">Reaction time</li>
+					</ul>
+				</div>
+			</div>
+			<div class="fragment" id="fragment_history" style="display: none">
+				<div id="history_table">
+					<table>
+						<tr class="head" style="font-size: 1.4em;"><td width="150px"><span>Index</span></td><td width="200px"><span>Time</span></td><td width="200px"><span>Target</span></td><td width="200px"><span>Footwork</span></td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>			
+</html>

@@ -1,6 +1,6 @@
 package com.jjurm.talentum.fencingmaster;
 
-import com.jjurm.talentum.fencingmaster.enums.Button;
+import com.jjurm.talentum.fencingmaster.enums.UserAction;
 import com.jjurm.talentum.fencingmaster.enums.Foot;
 import com.jjurm.talentum.fencingmaster.enums.Side;
 import com.jjurm.talentum.fencingmaster.enums.State;
@@ -15,19 +15,19 @@ public abstract class GpioGameListener implements GpioPinListenerDigital {
 		this.handler = handler;
 	}
 	
-	public static class ButtonListener extends GpioGameListener {
+	public static class UserActionListener extends GpioGameListener {
 
-		protected Button button;
+		protected UserAction userAction;
 		
-		public ButtonListener(GameEventsHandler handler, Button button) {
+		public UserActionListener(GameEventsHandler handler, UserAction userAction) {
 			super(handler);
-			this.button = button;
+			this.userAction = userAction;
 		}
 
 		@Override
 		public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
 			State state = event.getState().isLow() ? State.INTERACTING : State.NON_INTERACTING;
-			handler.buttonPressed(button, state);
+			handler.userAction(userAction, state);
 		}
 		
 	}

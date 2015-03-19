@@ -1,21 +1,18 @@
 package com.jjurm.talentum.fencingmaster;
 
-import static com.jjurm.talentum.fencingmaster.enums.Side.DOWN;
-import static com.jjurm.talentum.fencingmaster.enums.Side.LEFT;
-import static com.jjurm.talentum.fencingmaster.enums.Side.RIGHT;
-import static com.jjurm.talentum.fencingmaster.enums.Side.UP;
-
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.jjurm.talentum.fencingmaster.enums.Button;
 import com.jjurm.talentum.fencingmaster.enums.Foot;
 import com.jjurm.talentum.fencingmaster.enums.Side;
+import com.jjurm.talentum.fencingmaster.enums.UserAction;
 import com.jjurm.talentum.fencingmaster.game.FMState;
 import com.jjurm.talentum.fencingmaster.game.Game;
-import com.jjurm.talentum.fencingmaster.game.Welcome;
+import com.jjurm.talentum.fencingmaster.game.fmstate.Welcome;
 import com.jjurm.talentum.fencingmaster.rgb.RGBController;
+import com.jjurm.talentum.fencingmaster.utils.ObjectHolder;
 import com.jjurm.talentum.fencingmaster.web.WebServer;
+import com.jjurm.talentum.fencingmaster.web.WebSocketServerImpl;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
@@ -24,15 +21,13 @@ import com.pi4j.io.gpio.PinPullResistance;
 
 public class Main {
 
-	public static final Side[] AVAILABLE_SIDES = {RIGHT, UP, LEFT, DOWN};
-	
 	private static GpioController gpio;
 	private static RGBController rgb;
 	
 	private static Game game;
 	private static WebServer webServer;
+	private static WebSocketServerImpl webSocketServer;
 	
-	private static Thread mainThread;
 	private static AtomicBoolean exitPrepared = new AtomicBoolean(false);
 	
 	public static void run(String[] args) {
@@ -45,20 +40,28 @@ public class Main {
 			}
 		});
 		
-		mainThread = Thread.currentThread();
-
 		gpio = GpioFactory.getInstance();
 		rgb = new RGBController(gpio, Pins.PINS_SIDES_COLORS);
-		game = new Game(rgb);
-		prepareGpio();
+		
+		//Sound.cacheSounds();
+		
+		ObjectHolder<Game> gameHolder = new ObjectHolder<Game>();
 		
 		try {
-			webServer = new WebServer(game);
+			webServer = new WebServer(gameHolder);
+			webServer.start();
+			
+			webSocketServer = new WebSocketServerImpl(gameHolder);
+			webSocketServer.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		FMState state = new Welcome(game);
+		game = new Game(rgb, webSocketServer);
+		gameHolder.set(game);
+		prepareGpio();
+		
+		FMState state = new Welcome(game, true);
 		game.switchState(state);
 		
 		System.out.println("Main thread finished");
@@ -78,27 +81,25 @@ public class Main {
 		GpioPinDigitalInput in;
 		
 		in = gpio.provisionDigitalInputPin(Pins.PIN_BACKBUTTON, PinPullResistance.OFF);
-		//in.setDebounce(200);
-		in.addListener(new GpioGameListener.ButtonListener(game, Button.BACKBUTTON));
+		in.addListener(new GpioGameListener.UserActionListener(game, UserAction.BACKBUTTON));
 		
 		for (Side side : Side.ALL) {
 			Pin pin = Pins.PINS_PLATES[side.index()];
-			in = new GpioPinDebounceWrapper(gpio.provisionDigitalInputPin(pin, PinPullResistance.OFF));
+			//in = new GpioPinDebounceWrapper(gpio.provisionDigitalInputPin(pin, PinPullResistance.OFF));
+			in = gpio.provisionDigitalInputPin(pin, PinPullResistance.OFF);
+			in.addListener(new GpioGameListener.PlateListener(game, side));
 			/*GpioPinDigitalOutputChangeMonitor monitor = new GpioPinDigitalOutputChangeMonitor(in);
 			monitor.addListener(new GpioGameListener.PlateListener(game, side));
 			monitor.start();*/
-			//in.setDebounce(100);
-			in.addListener(new GpioGameListener.PlateListener(game, side));
 		}
 		
 		for (Foot foot : Foot.ALL) {
 			Pin pin = Pins.PINS_FEET[foot.index()];
 			in = new GpioPinDebounceWrapper(gpio.provisionDigitalInputPin(pin, PinPullResistance.OFF));
+			in.addListener(new GpioGameListener.FootListener(game, foot));
 			/*GpioPinDigitalOutputChangeMonitor monitor = new GpioPinDigitalOutputChangeMonitor(in);
 			monitor.addListener(new GpioGameListener.FootListener(game, foot));
 			monitor.start();*/
-			//in.setDebounce(100);
-			in.addListener(new GpioGameListener.FootListener(game, foot));
 		}
 		
 	}
@@ -111,7 +112,18 @@ public class Main {
 				mainThread.interrupt();*/
 			
 			if (game != null)
-				game.shutdown();
+				game.terminate();
+			
+			if (webServer != null)
+				webServer.stop();
+			
+			if (webSocketServer != null) {
+				try {
+					webSocketServer.stop(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 			
 			if (gpio != null)
 				gpio.shutdown();

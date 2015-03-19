@@ -1,0 +1,117 @@
+@font-face {
+	font-family: vikingsquad;
+	font-style: normal;
+	src: url(fonts/vikingsquad.ttf);
+}
+@font-face {
+	font-family: vikingsquadhalf;
+	font-style: normal;
+	src: url(fonts/vikingsquadhalf.ttf);
+}
+@font-face {
+	font-family: vikingsquadhalf;
+	font-style: italic;
+	src: url(fonts/vikingsquadhalfital.ttf);
+}
+@font-face {
+	font-family: vikingsquadlaser;
+	font-style: normal;
+	src: url(fonts/vikingsquadlaser.ttf);
+}
+body {
+	margin: 0px;
+	padding: 0px;
+	padding-top: 20px;
+	font-family: vikingsquad;
+	font-size: 2em;
+	width: 90%;
+	min-width: 900px;
+	margin: auto;
+}
+.navbar ul {
+	margin: 0px;
+	padding: 0px;
+	margin-top: 20px;
+	font-size: 1.5em;
+	display: block;
+	list-style-type: none;
+}
+.navbar li {
+	width: 22%;
+	display: inline-block;
+	cursor: pointer;
+	vertical-align: middle;
+}
+#headline {
+	font-size: 2.2em;
+	width: 53%;
+	cursor: auto;
+	text-align: center;
+}
+#content {
+	/*width: 700px;*/
+	/*background-color: #EEE;*/
+	margin: auto;
+	margin-top: 50px;
+	padding: 20px;
+}
+#reaction_block {
+	/*margin-left: -50px;*/
+	font-style: vikingsquadhalf;
+	font-style: italic;
+	color: #800;
+	margin: auto;
+	margin-bottom: 50px;
+	text-align: center;
+	margin-left: -30px;
+}
+#reaction_time {
+	font-size: 12em;
+	width: 830px;
+	font-family: vikingsquadhalf;
+	font-style: italic;
+	display: inline-block;
+	text-align: left;
+}
+#reaction_time_sec {
+	font-family: vikingsquadhalf;
+	font-style: italic;
+	font-size: 3em;
+	display: inline-block;
+}
+#stats {
+	border: 4px solid black;
+	border-radius: 20px;
+	padding: 15px;
+}
+#stats ul {
+	margin: 0px;
+	padding: 0px;
+	font-size: 2em;
+	display: block;
+	list-style-type: none;
+}
+#stats ul li {
+	width: 32%;
+	text-align: center;
+	display: inline-block;
+	margin: 0px;
+	padding: 0px;
+}
+#history_table table {
+	border: 4px solid black;
+	border-radius: 20px;
+	margin: auto;
+}
+#history_table table .head td {
+	padding-bottom: 10px;
+}
+#history_table table .head span {
+	display: block;
+	border-bottom: 4px solid black;
+}
+#history_table table td {
+	text-align: center;
+	padding: 3px 20px;
+	font-size: 1.2em;
+}

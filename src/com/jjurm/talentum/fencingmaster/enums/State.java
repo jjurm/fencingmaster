@@ -4,6 +4,8 @@ public enum State {
 
 	INTERACTING(true, "interacting"), NON_INTERACTING(false, "non_interacting");
 	
+	public static final State DEFAULT = NON_INTERACTING;
+	
 	private boolean value;
 	private String name;
 	
