@@ -299,4 +299,9 @@ public class GpioPinDebounceWrapper implements GpioPinDigitalInput
 		pin.setShutdownOptions(unexport, state, resistance, mode);
 	}
 
+	@Override
+	public void export(PinMode mode, PinState defaultState) {
+		pin.export(mode, defaultState);
+	}
+
 }

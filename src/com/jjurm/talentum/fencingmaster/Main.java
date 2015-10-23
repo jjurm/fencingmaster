@@ -8,6 +8,7 @@ import com.jjurm.talentum.fencingmaster.enums.Side;
 import com.jjurm.talentum.fencingmaster.enums.UserAction;
 import com.jjurm.talentum.fencingmaster.game.FMState;
 import com.jjurm.talentum.fencingmaster.game.Game;
+import com.jjurm.talentum.fencingmaster.game.fmstate.SilentState;
 import com.jjurm.talentum.fencingmaster.game.fmstate.Welcome;
 import com.jjurm.talentum.fencingmaster.rgb.RGBController;
 import com.jjurm.talentum.fencingmaster.utils.ObjectHolder;
@@ -61,7 +62,9 @@ public class Main {
 		gameHolder.set(game);
 		prepareGpio();
 		
-		FMState state = new Welcome(game, true);
+		//FMState state = new Welcome(game, true);
+		game.setPresentation(false);
+		FMState state = new SilentState(game);
 		game.switchState(state);
 		
 		System.out.println("Main thread finished");

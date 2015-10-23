@@ -10,6 +10,7 @@ defaultEntry = {
 	}
 }
 window.entries = [defaultEntry];
+window.blinkInterval = 0;
 
 function selectedPanel() {
 	$("#fragment_history").hide();
@@ -27,6 +28,7 @@ function connectSocket() {
 	h = window.location.hostname.length > 0 ? window.location.hostname : "localhost";
 	window.webSocket = new WebSocket("ws://"+h+":7070");
 	window.webSocket.onopen = function() {
+		//stopBlinking();
 		request = {
 			content: "request",
 			type: "history",
@@ -36,8 +38,22 @@ function connectSocket() {
 	}
 	window.webSocket.onmessage = socketMessage;
 	window.webSocket.onclose = function() {
-		//location.reload()
+		//startBlinking();
+		//setTimeout(connectSocket, 1000);
 	}
+}
+
+function startBlinking() {
+	t = 300;
+	window.blinkInterval = setInterval(function() {
+		$("#headline span").fadeOut(t);
+		setTimeout(function() {
+			$("#headline span").fadeIn(t);
+		}, 500);
+	}, 1000);
+}
+function stopBlinking() {
+	clearInterval(window.blinkInterval);
 }
 
 function clearBoomedCounterInterval() {
@@ -49,6 +65,7 @@ function clearBoomedCounterInterval() {
 
 function socketMessage(evt) {
 	json = JSON.parse(evt.data);
+	console.debug(json)
 	switch (json.content) {
 		case "response":
 			switch (json.type) {

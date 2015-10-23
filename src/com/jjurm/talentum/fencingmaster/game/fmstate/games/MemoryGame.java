@@ -25,8 +25,10 @@ import com.jjurm.talentum.fencingmaster.rgb.GroupedRGBFilter;
 public class MemoryGame extends AbstractGame {
 
 	protected final int BLINK_DURATION = 200;
+	protected final int SUBLEVEL_COUNT = 2;
 
 	protected int level = 3;
+	protected int sublevel = SUBLEVEL_COUNT;
 	protected Side[] targets;
 
 	public MemoryGame(Game game) {
@@ -196,6 +198,11 @@ public class MemoryGame extends AbstractGame {
 				}
 				signalPlateOk(side, foot);
 				if (isFinish()) {
+					if (sublevel > 0) sublevel--;
+					if (sublevel == 0) {
+						sublevel = SUBLEVEL_COUNT;
+						level++;
+					}
 					nextRound();
 				}
 			} else {
@@ -208,6 +215,7 @@ public class MemoryGame extends AbstractGame {
 				Sound.WRONG.play();
 				signal(new GroupedRGBFilter(rgb.filter().color(RED).side(side), rgb.filter().color(BLUE)
 						.side(targets[targetIndex])));
+				if (sublevel > 0) sublevel--;
 				nextRound();
 			}
 		}

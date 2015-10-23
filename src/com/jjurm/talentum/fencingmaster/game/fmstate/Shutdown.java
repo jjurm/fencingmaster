@@ -7,10 +7,8 @@ import static com.jjurm.talentum.fencingmaster.utils.Utils.sleep;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import com.jjurm.talentum.fencingmaster.Main;
-import com.jjurm.talentum.fencingmaster.enums.Side;
 import com.jjurm.talentum.fencingmaster.enums.State;
 import com.jjurm.talentum.fencingmaster.enums.UserAction;
 import com.jjurm.talentum.fencingmaster.game.FMState;
@@ -27,7 +25,8 @@ public class Shutdown extends FMState {
 
 	@Override
 	protected void begin0() {
-		exitFuture = game.pool.schedule(new Runnable() {
+		shutdownRpi();
+		/*exitFuture = game.pool.schedule(new Runnable() {
 			@Override
 			public void run() {
 				reacting.set(false);
@@ -41,7 +40,7 @@ public class Shutdown extends FMState {
 			sleep(500);
 			rgb.filter().color(RED).side(side).set(false);
 		}
-		reacting.set(false);
+		reacting.set(false);*/
 	}
 
 	@Override
